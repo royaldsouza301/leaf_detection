@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaf Disease Detection</title>
+    <style>
+        img {
+            max-width: 500px;
+            max-height: 500px;
+            border: 2px sold red;
+        }
+
+        header {
+            display: flex;
+            align-content: center;
+            justify-content: center;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .form>button {
+            width: 200px;
+            padding: 1rem;
+            background-color: lawngreen;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .results {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .results>p {
+            font: bold;
+            font-size: large;
+            color: red;
+            text-transform: uppercase;
+        }
+
+        .results>h2 {
+            font: bold;
+            font-size: x-large;
+            color: blueviolet;
+        }
+    </style>
+    <script>
+        function previewImage() {
+            const fileInput = document.querySelector('input[type=file]');
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.addEventListener("load", function () {
+                const base64Image = reader.result;
+                document.getElementById("uploadedImage").src = base64Image;
+                sessionStorage.setItem('uploadedImage', base64Image);
+            }, false);
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const storedImage = sessionStorage.getItem('uploadedImage');
+            if (storedImage) {
+                document.getElementById("uploadedImage").src = storedImage;
+            }
+        });
+
+       
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1 class="heading">Leaf Disease Detection</h1>
+    </header>
+
+    <form method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        <input type="file" name="leaf_image" accept="image/*" required onchange="previewImage()" id="input" >
+        <img id="uploadedImage" alt="Uploaded Leaf Image">
+        <button type="submit" style="cursor: pointer;">Detect Disease</button>
+    </form>
+
+    <div class="results">
+
+        {% if prediction == 'other' %}
+        <h2>Prediction:</h2>
+        <p>This is not a valid Image , Please provide a valid image</p>
+        {% else %}
+        {% if prediction %}<p>The dicease is: {{ prediction }}</p> {%endif%}
+        {% endif %}
+    </div>
+</body>
+
+</html>
